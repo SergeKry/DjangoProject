@@ -1,0 +1,25 @@
+<h2>Database inputs:</h2>
+{% if user_results %}
+<ul>
+    {% for result in user_results %}
+    <li>
+        {{ result.member_input }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>No results are available.</p>
+{% endif %}
+
+<h2>request.session inputs:</h2>
+{% if session_results %}
+<ul>
+    {% for result in session_results %}
+    <li>
+        {{ result }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>No session results are available.</p>
+{% endif %}

@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>Input Form</title>
+</head>
+<body>
+    <h1>User's input</h1>
+    <form action="{% url 'members_app:save_input' %}" method="post">
+        {% csrf_token %}
+        <label for="input">Input:</label><br>
+        <input type="text" id="input" name="input"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
