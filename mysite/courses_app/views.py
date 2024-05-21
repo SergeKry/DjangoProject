@@ -5,6 +5,5 @@ from django.http import HttpResponse
 def index(request):
     if not request.user.is_authenticated:
         return HttpResponse("You have no permissions to view this page")
-    else:
-        return HttpResponse("This is the Courses page")
+    return HttpResponse("This is the Courses page")
 
