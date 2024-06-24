@@ -1,0 +1,19 @@
+<html>
+<body>
+    <h1>Add members:</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="button" id="select-all">Select All</button><br><br>
+        <button type="submit">Save</button>
+    </form>
+    <script>
+        document.getElementById('select-all').addEventListener('click', function() {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = true;
+            });
+        });
+    </script>
+</body>
+</html>
