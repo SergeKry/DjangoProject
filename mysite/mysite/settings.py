@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'messenger.apps.MessengerConfig',
+    'custom_user_app.apps.CustomUserAppConfig',
     'members_app.apps.MembersAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
