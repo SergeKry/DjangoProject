@@ -3,15 +3,28 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Chat, Message
 from .forms import MembersForm
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.generic import ListView
 
 
-@login_required()
-def index(request):
-    if request.user.is_superuser:
-        chats = Chat.objects.all()
-    else:
-        chats = Chat.objects.filter(members=request.user)
-    return render(request, 'messenger/index.html', {'chats': chats})
+class ChatListView(ListView):
+    model = Chat
+    template_name = 'messenger/index.html'
+    context_object_name = 'chats'
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            queryset = Chat.objects.all()
+        else:
+            queryset = Chat.objects.filter(members=self.request.user)
+        return queryset
+
+# @login_required()
+# def index(request):
+#     if request.user.is_superuser:
+#         chats = Chat.objects.all()
+#     else:
+#         chats = Chat.objects.filter(members=request.user)
+#     return render(request, 'messenger/index.html', {'chats': chats})
 
 
 @permission_required('messenger.add_chat')
