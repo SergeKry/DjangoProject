@@ -1,12 +1,15 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Chat, Message
-from .forms import MembersForm
+from .forms import MembersForm, ChatForm, MessageForm
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.generic import ListView
+from django.views import View
+from django.views.generic import ListView, CreateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
-class ChatListView(ListView):
+class ChatListView(LoginRequiredMixin, ListView):
     model = Chat
     template_name = 'messenger/index.html'
     context_object_name = 'chats'
@@ -18,21 +21,18 @@ class ChatListView(ListView):
             queryset = Chat.objects.filter(members=self.request.user)
         return queryset
 
-# @login_required()
-# def index(request):
-#     if request.user.is_superuser:
-#         chats = Chat.objects.all()
-#     else:
-#         chats = Chat.objects.filter(members=request.user)
-#     return render(request, 'messenger/index.html', {'chats': chats})
 
+class CreateChatView(PermissionRequiredMixin, CreateView):
+    permission_required = 'messenger.add_chat'
 
-@permission_required('messenger.add_chat')
-def create_chat(request):
-    chat_name = request.POST['chat_name']
-    new_chat = Chat(name=chat_name, owner=request.user)
-    new_chat.save()
-    return redirect('messenger:index')
+    model = Chat
+    form_class = ChatForm
+    template_name = 'messenger/create_chat.html'
+    success_url = reverse_lazy('messenger:index')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 def member_check(user, chat) -> bool:
@@ -43,24 +43,34 @@ def author_check(user, message) -> bool:
     return user == message.author
 
 
-@login_required()
-def chat(request, pk: int):
-    chat_obj = get_object_or_404(Chat, pk=pk)
-    if not member_check(request.user, chat_obj):
-        return HttpResponseForbidden()
-    messages = Message.objects.filter(chat=chat_obj).all()
-    return render(request, 'messenger/chat.html', {'chat': chat_obj, 'messages': messages})
+class ChatView(LoginRequiredMixin, View):
+    def get(self, request, pk: int):
+        chat_obj = get_object_or_404(Chat, pk=pk)
+        if not member_check(request.user, chat_obj):
+            return HttpResponseForbidden()
+        messages = Message.objects.filter(chat=chat_obj).all()
+        return render(request, 'messenger/chat.html', {'chat': chat_obj, 'messages': messages})
 
 
-@permission_required('messenger.add_message')
-def send_message(request):
-    chat_pk = request.POST['chat_id']
-    current_chat = get_object_or_404(Chat, pk=chat_pk)
-    if not member_check(request.user, current_chat):
-        return HttpResponseForbidden()
-    new_message = Message(text=request.POST['message'], chat=current_chat, author=request.user)
-    new_message.save()
-    return redirect('messenger:chat', pk=chat_pk)
+class CreateMessageView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'messenger.add_message'
+
+    def get(self, request, pk: int):
+        form = MessageForm()
+        return render(request, 'messenger/send_message.html', {"form": form})
+
+    def post(self, request, pk: int):
+        current_chat = get_object_or_404(Chat, pk=pk)
+        if not member_check(request.user, current_chat):
+            return HttpResponseForbidden()
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            new_message = form.save(commit=False)
+            new_message.author = request.user
+            new_message.chat = current_chat
+            new_message.save()
+            return redirect('messenger:chat', pk=pk)
+        return render(request, 'messenger/send_message.html', {"form": form})
 
 
 @permission_required('messenger.change_message')

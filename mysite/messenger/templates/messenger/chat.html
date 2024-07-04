@@ -31,12 +31,8 @@
     <p style="color: #808080">start messaging</p>
     {% endif %}
 <br>
-    <form style="margin-top:16px" action="{% url 'messenger:send_message' %}" method="post">
-        {% csrf_token %}
-        <label for="message">Message:</label>
-        <input style="width:400px" type="text" id="message" name="message">
-        <input type="hidden" name="chat_id" value="{{ chat.pk }}">
-        <input type="submit" value="Send">
-    </form>
+<a href="{% url 'messenger:send_message' chat.pk %}">Send message</a>
+<br><br>
+<a href="{% url 'messenger:index' %}">Back to chats</a>
 </body>
 </html>
