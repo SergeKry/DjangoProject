@@ -6,6 +6,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .mixins import MemberCheckMixin, AuthorCheckMixin
 
 
 class ChatListView(LoginRequiredMixin, ListView):
@@ -34,67 +35,47 @@ class CreateChatView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-def member_check(user, chat) -> bool:
-    return user in chat.members.all() or user.is_superuser
-
-
 def author_check(user, message) -> bool:
     return user == message.author
 
 
-class ChatView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class ChatView(LoginRequiredMixin, PermissionRequiredMixin, MemberCheckMixin, View):
     permission_required = 'messenger.add_message'
 
-    def get(self, request, pk: int):
-        self.chat = get_object_or_404(Chat, pk=pk)
-        if not member_check(request.user, self.chat):
-            return HttpResponseForbidden()
+    def get(self, request, *args, **kwargs):
         messages = Message.objects.filter(chat=self.chat).all()
         form = MessageForm()
         return render(request, 'messenger/chat.html',
                       {'chat': self.chat, 'messages': messages, 'form': form})
 
-    def post(self, request, pk: int):
-        self.chat = get_object_or_404(Chat, pk=pk)
-        if not member_check(request.user, self.chat):
-            return HttpResponseForbidden()
+    def post(self, request, *args, **kwargs):
         form = MessageForm(request.POST)
         if form.is_valid():
             new_message = form.save(commit=False)
             new_message.author = request.user
             new_message.chat = self.chat
             new_message.save()
-            return redirect('messenger:chat', pk=pk)
+            return redirect('messenger:chat', pk=self.chat.pk)
 
 
-class EditMessageView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class EditMessageView(LoginRequiredMixin, PermissionRequiredMixin, AuthorCheckMixin, View):
     permission_required = 'messenger.change_message'
 
-    def get(self, request, pk: int):
-        message = get_object_or_404(Message, pk=pk)
-        if not author_check(request.user, message):
-            return HttpResponseForbidden()
-        return render(request, 'messenger/edit_message_form.html', {'message': message})
+    def get(self, request, *args, **kwargs):
+        return render(request, 'messenger/edit_message_form.html', {'message': self.message})
 
-    def post(self, request, pk: int):
-        message = get_object_or_404(Message, pk=pk)
-        if not author_check(request.user, message):
-            return HttpResponseForbidden()
-        message.text = request.POST['your_message']
-        message.save()
-        return redirect('messenger:chat', pk=message.chat.id)
+    def post(self, request, *args, **kwargs):
+        self.message.text = request.POST['your_message']
+        self.message.save()
+        return redirect('messenger:chat', pk=self.message.chat.id)
 
 
-class DeleteMessageView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class DeleteMessageView(LoginRequiredMixin, PermissionRequiredMixin, AuthorCheckMixin, View):
     permission_required = 'messenger.delete_message'
 
-    def post(self, request, pk: int):
-        message = get_object_or_404(Message, pk=pk)
-        if not author_check(request.user, message):
-            return HttpResponseForbidden()
-        message.delete()
-        chat_pk = message.chat.id
-        return redirect('messenger:chat', pk=chat_pk)
+    def post(self, *args, **kwargs):
+        self.message.delete()
+        return redirect('messenger:chat', pk=self.message.chat.id)
 
 
 class MembersView(LoginRequiredMixin, PermissionRequiredMixin, View):
