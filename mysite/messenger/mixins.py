@@ -1,6 +1,11 @@
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, HttpResponseNotAllowed
 from .models import Chat, Message
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+import logging
+from django.contrib import messages
+from django.utils.cache import add_never_cache_headers
+
+logger = logging.getLogger(__name__)
 
 
 class MemberCheckMixin:
@@ -43,9 +48,72 @@ class AuthorCheckMixin():
 
 
 class TitleMixin:
+    """Add 'No title' as default title if title is not specified"""
     title = 'No title'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = self.title
         return context
+
+
+class LoggingMixin:
+    """Logs each request to the view"""
+    def dispatch(self, request, *args, **kwargs):
+        logger.info(f"Request method: {request.method}, URL: {request.get_full_path()}")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserAgentMixin:
+    """Adds the user agent to the context data"""
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_agent'] = self.request.META.get('HTTP_USER_AGENT', 'unknown')
+        return context
+
+
+class AjaxOnlyMixin:
+    """Ensures that the view only processes AJAX requests"""
+    def dispatch(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseBadRequest("This view can only handle AJAX requests.")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class FormSuccessMessageMixin:
+    """Adds a success message when a form is successfully submitted"""
+
+    success_message = ""
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, self.success_message)
+        return response
+
+
+class RedirectAuthenticatedUserMixin:
+    """Redirects authenticated users to a specified URL."""
+
+    authenticated_redirect_url = '/'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(self.authenticated_redirect_url)
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CacheControlMixin:
+    """Adds cache control headers to the response."""
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        add_never_cache_headers(response)
+        return response
+
+
+class RequirePostMixin:
+    """Ensures that the view only processes POST requests"""
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method != 'POST':
+            return HttpResponseNotAllowed(['POST'])
+        return super().dispatch(request, *args, **kwargs)
