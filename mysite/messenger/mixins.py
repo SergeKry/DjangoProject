@@ -40,3 +40,12 @@ class AuthorCheckMixin():
         if request.user != self.message.author:
             return HttpResponseForbidden()
         return super().dispatch(request, *args, **kwargs)
+
+
+class TitleMixin:
+    title = 'No title'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.title
+        return context

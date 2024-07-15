@@ -1,4 +1,8 @@
 <html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
 <body>
 {% if perms.messenger.add_chat %}
 <a href="{% url 'messenger:create_chat' %}">Create chat</a>

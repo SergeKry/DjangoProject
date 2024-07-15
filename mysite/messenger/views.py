@@ -6,10 +6,10 @@ from django.views import View
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .mixins import MemberCheckMixin, AuthorCheckMixin
+from .mixins import MemberCheckMixin, AuthorCheckMixin, TitleMixin
 
 
-class ChatListView(LoginRequiredMixin, ListView):
+class ChatListView(LoginRequiredMixin, TitleMixin, ListView):
     model = Chat
     template_name = 'messenger/index.html'
     context_object_name = 'chats'
@@ -22,7 +22,7 @@ class ChatListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class CreateChatView(PermissionRequiredMixin, CreateView):
+class CreateChatView(PermissionRequiredMixin, TitleMixin, CreateView):
     permission_required = 'messenger.add_chat'
 
     model = Chat
@@ -33,10 +33,6 @@ class CreateChatView(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
-
-
-def author_check(user, message) -> bool:
-    return user == message.author
 
 
 class ChatView(LoginRequiredMixin, PermissionRequiredMixin, MemberCheckMixin, View):
