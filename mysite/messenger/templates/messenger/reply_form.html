@@ -6,7 +6,9 @@
 </head>
 <body>
     <p>Reply to:</p>
-    <p>{{ message }}</p>
+    <blockquote>{{ message }}
+        <p>by: <cite>{{ message.author }}</cite></p>
+    </blockquote>
     <form action="{% url 'messenger:chat' message.chat_id %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
@@ -14,6 +16,6 @@
         <input type="submit" value="Send reply">
     </form>
     <br>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Cancel</a>
+    <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
 </body>
 </html>
