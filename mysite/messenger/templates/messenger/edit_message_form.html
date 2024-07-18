@@ -1,3 +1,7 @@
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+
 <html>
 <body>
     <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
@@ -6,6 +10,7 @@
         <textarea name="your_message" id="your_message">{{ message }}</textarea>
         <input type="submit" value="OK">
     </form>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Cancel</a>
+    <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
 </body>
 </html>
+{% endblock %}
