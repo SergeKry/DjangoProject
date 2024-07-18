@@ -13,6 +13,7 @@ class ChatListView(LoginRequiredMixin, TitleMixin, ListView):
     model = Chat
     template_name = 'messenger/index.html'
     context_object_name = 'chats'
+    title = 'Chats'
 
     def get_queryset(self):
         if self.request.user.is_superuser:
