@@ -8,10 +8,9 @@
     {% if sent_messages %}
         {% for message in sent_messages %}
         <div>
-            <div style="width:600px;height:auto;display:inline-block">
-            <p style="margin:1px">
-                [{{  message.created_at}}] <b>{{ message.author }}:</b> {{ message.text }}
-            </p>
+            <div style="width:700px;height:auto;display:inline-block">
+                <div style="display: inline-block; min-width: 200px; vertical-align: top">[{{  message.created_at }}]</div>
+                <div style="display: inline-block; max-width: 450px"> <b>{{ message.author }}:</b> {{ message.text }}</div>
             </div>
         {% if request.user == message.author %}
             <div style="display:inline-block">
