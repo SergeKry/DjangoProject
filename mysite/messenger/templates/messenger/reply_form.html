@@ -3,18 +3,20 @@
 {% block content %}
 
 <body>
-    <p>Reply to:</p>
-    <blockquote>{{ message }}
-        <p>by: <cite>{{ message.author }}</cite></p>
-    </blockquote>
-    <form action="{% url 'messenger:chat' message.chat_id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="hidden" name="replied_to" value="{{ message.pk }}">
-        <input type="submit" value="Send reply">
-    </form>
-    <br>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
+    <div class="container">
+        <p>Reply to:</p>
+        <blockquote>{{ message }}
+            <p>by: <cite>{{ message.author }}</cite></p>
+        </blockquote>
+        <form action="{% url 'messenger:chat' message.chat_id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="replied_to" value="{{ message.pk }}">
+            <input type="submit" value="Send reply">
+        </form>
+        <br>
+        <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
+    </div>
 </body>
 </html>
 {% endblock %}

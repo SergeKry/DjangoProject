@@ -4,53 +4,55 @@
 
 <html>
 <body>
-<h1>{{ chat }}</h1>
-    {% if sent_messages %}
-        {% for message in sent_messages %}
-        <div>
-            <div style="width:700px;height:auto;display:inline-block">
-                <div style="display: inline-block; min-width: 200px; vertical-align: top">[{{  message.created_at }}]</div>
-                <div style="display: inline-block; max-width: 450px"> <b>{{ message.author }}:</b> {{ message.text }}</div>
+<div class="container">
+    <h1>{{ chat }}</h1>
+        {% if sent_messages %}
+            {% for message in sent_messages %}
+            <div>
+                <div style="width:700px;height:auto;display:inline-block">
+                    <div style="display: inline-block; min-width: 200px; vertical-align: top">[{{  message.created_at }}]</div>
+                    <div style="display: inline-block; max-width: 450px"> <b>{{ message.author }}:</b> {{ message.text }}</div>
+                </div>
+            {% if request.user == message.author %}
+                <div style="display:inline-block">
+                    <form style="margin:0" action="{% url 'messenger:edit_message' message.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="chat_id" value="{{ chat.pk }}">
+                        <input type="submit" value="Edit">
+                    </form>
+                </div>
+                <div style="display:inline-block">
+                    <form style="margin:0" action="{% url 'messenger:delete_message' message.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Delete">
+                    </form>
+                </div>
+                {% else %}
+                <div style="display:inline-block">
+                    <form style="margin:0" action="{% url 'messenger:reply' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="message_id" value="{{ message.pk }}">
+                        <input type="submit" value="Reply">
+                    </form>
+                </div>
             </div>
-        {% if request.user == message.author %}
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:edit_message' message.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="chat_id" value="{{ chat.pk }}">
-                    <input type="submit" value="Edit">
-                </form>
-            </div>
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:delete_message' message.pk %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="Delete">
-                </form>
-            </div>
-            {% else %}
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:reply' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="message_id" value="{{ message.pk }}">
-                    <input type="submit" value="Reply">
-                </form>
-            </div>
-        </div>
+            {% endif %}
+            {% endfor %}
+        {% else %}
+        <p style="color: #808080">start messaging</p>
         {% endif %}
-        {% endfor %}
-    {% else %}
-    <p style="color: #808080">start messaging</p>
-    {% endif %}
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-<br>
-{% include 'messenger/send_message.html' %}
-<br><br>
-<a href="{% url 'messenger:index' %}">Back to chats</a>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    <br>
+    {% include 'messenger/send_message.html' %}
+    <br><br>
+    <a href="{% url 'messenger:index' %}">Back to chats</a>
+</div>
 </body>
 </html>
 {% endblock %}

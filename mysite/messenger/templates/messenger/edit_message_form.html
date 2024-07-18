@@ -4,13 +4,15 @@
 
 <html>
 <body>
-    <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
-        {% csrf_token %}
-        <label for="your_message">Your message:</label>
-        <textarea name="your_message" id="your_message">{{ message }}</textarea>
-        <input type="submit" value="OK">
-    </form>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
+    <div class="container">
+        <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
+            {% csrf_token %}
+            <label for="your_message">Your message:</label>
+            <textarea name="your_message" id="your_message">{{ message }}</textarea>
+            <input type="submit" value="OK">
+        </form>
+        <a href="{% url 'messenger:chat' message.chat_id %}">Back</a>
+    </div>
 </body>
 </html>
 {% endblock %}
