@@ -6,7 +6,7 @@
 <body>
 <div class="container">
     <h1>{{ chat }}</h1>
-    <div class="overflow-scroll p-3 border" style="max-height: 500px; max-width: 80%" id="messageArea">
+    <div class="overflow-scroll p-3 border" style="max-height: 500px; min-height: 500px; max-width: 80%" id="messageArea">
         {% if sent_messages %}
             {% for message in sent_messages %}
                 <div class="container">
