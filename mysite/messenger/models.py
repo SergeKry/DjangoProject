@@ -17,10 +17,10 @@ class Chat(models.Model):
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     text = models.TextField(max_length=500)
-    replied_to = models.ForeignKey('self', on_delete=models.DO_NOTHING, null=True, blank=True, related_name='reply')
+    replied_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='reply')
 
     class Meta:
         ordering = ['created_at']

@@ -25,6 +25,7 @@ class ChatListView(LoginRequiredMixin, TitleMixin, ListView):
 
 class CreateChatView(PermissionRequiredMixin, TitleMixin, CreateView):
     permission_required = 'messenger.add_chat'
+    title = 'Add Chat'
 
     model = Chat
     form_class = ChatForm
@@ -43,7 +44,7 @@ class ChatView(LoginRequiredMixin, PermissionRequiredMixin, MemberCheckMixin, Vi
         messages = Message.objects.filter(chat=self.chat).all()
         form = MessageForm()
         return render(request, 'messenger/chat.html',
-                      {'chat': self.chat, 'sent_messages': messages, 'form': form})
+                      {'chat': self.chat, 'sent_messages': messages, 'form': form, 'title': self.chat})
 
     def post(self, request, *args, **kwargs):
         form = MessageForm(request.POST)

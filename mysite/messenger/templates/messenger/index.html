@@ -4,7 +4,9 @@
     <body>
     <div class="container">
         {% if perms.messenger.add_chat %}
-            <a href="{% url 'messenger:create_chat' %}">Create chat</a>
+            <div class="d-grid gap-2 col-4 mx-start">
+                <a class="btn btn-primary" href="{% url 'messenger:create_chat' %}" role="button">Create chat</a>
+            </div>
         {% endif %}
         <h1>Available chats:</h1>
         <div class="chat-list">
@@ -16,7 +18,7 @@
                             <a href="{% url 'messenger:chat' chat.pk %}">{{ chat.name }}</a>
                         </div>
                         {% if perms.messenger.add_chat %}
-                            <a href="{% url 'messenger:members' chat.pk %}"><button>Invite members</button></a>
+                            <a class="btn btn-outline-primary btn-sm" href="{% url 'messenger:members' chat.pk %}">Invite members</a>
                         {% endif %}
                     </li>
                     {% endfor %}
