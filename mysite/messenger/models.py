@@ -30,7 +30,7 @@ class Message(models.Model):
 
 
 class MessageLog(models.Model):
-    message = models.ForeignKey(Message, on_delete=models.DO_NOTHING)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     time = models.DateTimeField(auto_now_add=True)
 
