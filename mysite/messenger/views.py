@@ -1,4 +1,3 @@
-from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Chat, Message
 from .forms import MembersForm, ChatForm, MessageForm
@@ -7,6 +6,7 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .mixins import MemberCheckMixin, AuthorCheckMixin, TitleMixin
+from django.contrib import messages
 
 
 class ChatListView(LoginRequiredMixin, TitleMixin, ListView):
@@ -42,7 +42,7 @@ class ChatView(LoginRequiredMixin, PermissionRequiredMixin, MemberCheckMixin, Vi
         messages = Message.objects.filter(chat=self.chat).all()
         form = MessageForm()
         return render(request, 'messenger/chat.html',
-                      {'chat': self.chat, 'messages': messages, 'form': form})
+                      {'chat': self.chat, 'sent_messages': messages, 'form': form})
 
     def post(self, request, *args, **kwargs):
         form = MessageForm(request.POST)
@@ -50,6 +50,11 @@ class ChatView(LoginRequiredMixin, PermissionRequiredMixin, MemberCheckMixin, Vi
             new_message = form.save(commit=False)
             new_message.author = request.user
             new_message.chat = self.chat
+            if request.POST.get('replied_to'):
+                replied_message = get_object_or_404(Message, pk=request.POST.get('replied_to'))
+                new_message.replied_to = replied_message
+                if replied_message.author.is_superuser:
+                    messages.success(request, 'Ви успішно надіслали повідомлення суперюзеру')
             new_message.save()
             return redirect('messenger:chat', pk=self.chat.pk)
 
@@ -89,3 +94,10 @@ class MembersView(LoginRequiredMixin, PermissionRequiredMixin, View):
             selected_members = form.cleaned_data['members']
             current_chat.members.set(selected_members)
             return redirect('messenger:index')
+
+
+class ReplyView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        message = get_object_or_404(Message, pk=request.GET.get('message_id'))
+        form = MessageForm(initial={'text': f'@{message.author} '})
+        return render(request, 'messenger/reply_form.html', {'message': message, 'form': form})
