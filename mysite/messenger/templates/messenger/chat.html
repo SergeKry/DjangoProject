@@ -14,7 +14,7 @@
                 <div class="container">
                     <div class="row mt-1">
                         <div class="col">[{{  message.created_at }}]</div>
-                        <div class="col-7"><b> {{ message.author }}: </b>{{ message.text }}</div>
+                        <div class="col-7"><span class="status"></span><b> {{ message.author }}: </b>{{ message.text }}</div>
                         <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex">
                                 {% if request.user == message.author %}
