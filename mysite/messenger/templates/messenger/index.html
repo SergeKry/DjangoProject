@@ -1,13 +1,11 @@
 <html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
 <body>
 {% if perms.messenger.add_chat %}
-    <h1>Create chat</h1>
-        <form action="{% url 'messenger:create_chat' %}" method="post">
-            {% csrf_token %}
-            <label for="input">Chat Name:</label>
-            <input type="text" id="chat_name" name="chat_name">
-            <input type="submit" value="Submit">
-        </form>
+<a href="{% url 'messenger:create_chat' %}">Create chat</a>
 {% endif %}
 <h1>Available chats:</h1>
     {% if chats %}

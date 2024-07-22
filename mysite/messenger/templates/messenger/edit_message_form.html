@@ -1,11 +1,11 @@
 <html>
 <body>
-    <form action="{% url 'messenger:update_message' %}" method="post">
+    <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
         {% csrf_token %}
         <label for="your_message">Your message:</label>
         <input id="your_message" type="text" name="your_message" value="{{ message }}">
-        <input type="hidden" name="message_id" value="{{ message.pk }}">
         <input type="submit" value="OK">
     </form>
+    <a href="{% url 'messenger:chat' message.chat_id %}">Cancel</a>
 </body>
 </html>
