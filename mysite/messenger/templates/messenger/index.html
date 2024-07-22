@@ -1,26 +1,33 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-</head>
-<body>
-{% if perms.messenger.add_chat %}
-<a href="{% url 'messenger:create_chat' %}">Create chat</a>
-{% endif %}
-<h1>Available chats:</h1>
-    {% if chats %}
-<ul>
-    {% for chat in chats %}
-    <li>
-        <a href="{% url 'messenger:chat' chat.pk %}">{{ chat.name }}</a>
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+    <body>
+    <div class="container">
         {% if perms.messenger.add_chat %}
-            <a href="{% url 'messenger:members' chat.pk %}"><button>Invite members</button></a>
+            <div class="d-grid gap-2 col-4 mx-start">
+                <a class="btn btn-primary" href="{% url 'messenger:create_chat' %}" role="button">Create chat</a>
+            </div>
         {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-    <p>No chats available.</p>
-{% endif %}
-</body>
-</html>
+        <h1>Available chats:</h1>
+        <div class="chat-list">
+            {% if chats %}
+                <ul>
+                    {% for chat in chats %}
+                    <li>
+                        <div style="min-width: 400px; display: inline-block">
+                            <a href="{% url 'messenger:chat' chat.pk %}">{{ chat.name }}</a>
+                        </div>
+                        {% if perms.messenger.add_chat %}
+                            <a class="btn btn-outline-primary btn-sm" href="{% url 'messenger:members' chat.pk %}">Invite members</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No chats available.</p>
+            {% endif %}
+        </div>
+    </div>
+    </body>
+    </html>
+{% endblock %}

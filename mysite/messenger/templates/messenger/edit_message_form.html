@@ -1,11 +1,23 @@
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+
 <html>
 <body>
-    <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
-        {% csrf_token %}
-        <label for="your_message">Your message:</label>
-        <input id="your_message" type="text" name="your_message" value="{{ message }}">
-        <input type="submit" value="OK">
-    </form>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Cancel</a>
+<div class="container">
+        <div class="container-fluid p-3">
+            <form action="{% url 'messenger:edit_message' message.pk %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-9">
+                        <textarea name="your_message" cols="40" rows="3" class="form-control" id="your_message">{{ message }}</textarea>
+                    </div>
+                    <div class="col"><button type="submit" class="btn btn-primary">OK</button></div>
+                </div>
+            </form>
+        </div>
+    <a class="btn btn-secondary btn-lg" href="{% url 'messenger:chat' message.chat_id %}">< Back</a>
+</div>
 </body>
 </html>
+{% endblock %}

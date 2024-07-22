@@ -17,6 +17,10 @@ class ChatForm(forms.ModelForm):
 
 
 class MessageForm(forms.ModelForm):
+    text = forms.CharField(label='', widget=forms.Textarea(attrs={'class': 'form-control',
+                                                                  'placeholder': 'Your message',
+                                                                  'rows': '3'}))
+
     class Meta:
         model = Message
         fields = ['text']

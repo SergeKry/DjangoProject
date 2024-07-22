@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("messenger/", include("messenger.urls")),
+    path("", include("messenger.urls")),
     path("courses/", include("courses_app.urls")),
     path("members/", include("members_app.urls")),
     path("admin/", admin.site.urls),

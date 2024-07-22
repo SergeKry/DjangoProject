@@ -1,52 +1,63 @@
+{% extends 'messenger/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
 <html>
 <body>
-<h1>{{ chat }}</h1>
-    {% if sent_messages %}
-        {% for message in sent_messages %}
-        <div>
-            <div style="width:600px;height:auto;display:inline-block">
-            <p style="margin:1px">
-                [{{  message.created_at}}] <b>{{ message.author }}:</b> {{ message.text }}
-            </p>
-            </div>
-        {% if request.user == message.author %}
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:edit_message' message.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="chat_id" value="{{ chat.pk }}">
-                    <input type="submit" value="Edit">
-                </form>
-            </div>
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:delete_message' message.pk %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="Delete">
-                </form>
-            </div>
-            {% else %}
-            <div style="display:inline-block">
-                <form style="margin:0" action="{% url 'messenger:reply' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="message_id" value="{{ message.pk }}">
-                    <input type="submit" value="Reply">
-                </form>
-            </div>
-        </div>
+<div class="container">
+    <h1>{{ chat }}</h1>
+    <div class="overflow-scroll p-3 border" style="max-height: 500px; min-height: 500px; max-width: 80%" id="messageArea">
+        {% if sent_messages %}
+            {% for message in sent_messages %}
+                <div class="container">
+                    <div class="row mt-1">
+                        <div class="col">[{{  message.created_at }}]</div>
+                        <div class="col-7"><b> {{ message.author }}: </b>{{ message.text }}</div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex">
+                                {% if request.user == message.author %}
+                                    <form style="margin:0" action="{% url 'messenger:edit_message' message.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="chat_id" value="{{ chat.pk }}">
+                                        <input class="btn btn-outline-secondary btn-sm" type="submit" value="Edit">
+                                    </form>
+                                    <form style="margin:0" action="{% url 'messenger:delete_message' message.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <input class="btn btn-outline-danger btn-sm" type="submit" value="Delete">
+                                    </form>
+                                {% else %}
+                                    <form style="margin:0" action="{% url 'messenger:reply' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="message_id" value="{{ message.pk }}">
+                                        <input class="btn btn-outline-primary btn-sm" type="submit" value="Reply">
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+        <p style="color: #808080">start messaging</p>
         {% endif %}
-        {% endfor %}
-    {% else %}
-    <p style="color: #808080">start messaging</p>
-    {% endif %}
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-<br>
-{% include 'messenger/send_message.html' %}
-<br><br>
-<a href="{% url 'messenger:index' %}">Back to chats</a>
+    </div>
+    <div>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <br>
+    {% include 'messenger/send_message.html' %}
+    <br><br>
+    <a class="btn btn-secondary btn-lg" href="{% url 'messenger:index' %}" role="button">< Back to chats</a>
+</div>
+<script src="{% static 'messenger/js/chat_utils.js' %}"></script>
 </body>
 </html>
+{% endblock %}

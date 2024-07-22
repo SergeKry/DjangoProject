@@ -5,11 +5,15 @@
     <title>Send message</title>
 </head>
 <body>
-    <h1>Add Message</h1>
+    <h3>Add Message</h3>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send</button>
+        <div class="container">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-9">{{ form.as_p }}</div>
+                <div class="col"><button type="submit" class="btn btn-primary">Send</button></div>
+            </div>
+        </div>
     </form>
 </body>
 </html>

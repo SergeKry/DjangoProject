@@ -1,19 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Reply</title>
-</head>
+{% extends 'messenger/base.html' %}
+
+{% block content %}
+
 <body>
-    <p>Reply to:</p>
-    <p>{{ message }}</p>
-    <form action="{% url 'messenger:chat' message.chat_id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="hidden" name="replied_to" value="{{ message.pk }}">
-        <input type="submit" value="Send reply">
-    </form>
-    <br>
-    <a href="{% url 'messenger:chat' message.chat_id %}">Cancel</a>
+    <div class="container">
+        <p>Reply to:</p>
+        <blockquote>{{ message.author }}: {{ message }}</blockquote>
+        <form action="{% url 'messenger:chat' message.chat_id %}" method="post">
+            <div class="container-fluid pt-3 pb-3">
+                {% csrf_token %}
+                    <div class="row">
+                        <div class="col-9">
+                            {{ form.as_p }}
+                        </div>
+                        <div class="col">
+                            <input class="btn btn-primary" type="submit" value="Send reply">
+                            <input type="hidden" name="replied_to" value="{{ message.pk }}">
+                        </div>
+                    </div>
+            </div>
+        </form>
+        <a class="btn btn-secondary btn-lg" href="{% url 'messenger:chat' message.chat_id %}">< Back</a>
+    </div>
 </body>
 </html>
+{% endblock %}
