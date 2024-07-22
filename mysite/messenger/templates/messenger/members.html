@@ -1,5 +1,7 @@
 {% extends 'messenger/base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <html>
@@ -13,14 +15,8 @@
             <button type="submit">Save</button>
         </form>
         <a href="{% url 'messenger:index' %}">Back</a>
-        <script>
-            document.getElementById('select-all').addEventListener('click', function() {
-                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(function(checkbox) {
-                    checkbox.checked = true;
-                });
-            });
-        </script>
+    </div>
+        <script src="{% static 'messenger/js/members_utils.js' %}"></script>
 </body>
 </html>
 

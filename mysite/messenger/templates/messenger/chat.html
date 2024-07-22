@@ -1,5 +1,7 @@
 {% extends 'messenger/base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <html>
@@ -45,22 +47,17 @@
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
         {% endif %}
     </div>
-
-    <script>
-        var messageArea = document.querySelector('#messageArea');
-        messageArea.scrollTop = messageArea.scrollHeight - messageArea.clientHeight;
-    </script>
-
     <br>
     {% include 'messenger/send_message.html' %}
     <br><br>
     <a class="btn btn-secondary btn-lg" href="{% url 'messenger:index' %}" role="button">< Back to chats</a>
 </div>
+<script src="{% static 'messenger/js/chat_utils.js' %}"></script>
 </body>
 </html>
 {% endblock %}
