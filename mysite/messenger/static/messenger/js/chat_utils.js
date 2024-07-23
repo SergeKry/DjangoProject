@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         names.forEach(function (name) {
             name.addEventListener('mouseover', function (event) {
-                showTooltip(this, event);
+                showTooltip(event);
             });
 
             name.addEventListener('mouseout', function () {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        function showTooltip(element, event) {
+        function showTooltip(event) {
             tooltip.style.display = 'block';
             tooltip.style.left = event.pageX + 10 + 'px'; // Offset to avoid covering the cursor
             tooltip.style.top = event.pageY + 10 + 'px';
