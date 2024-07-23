@@ -1,19 +1,36 @@
 // Function for scroll to be in the bottom by default
-var messageArea = document.querySelector('#messageArea');
+let messageArea = document.querySelector('#messageArea');
         messageArea.scrollTop = messageArea.scrollHeight - messageArea.clientHeight;
 
+
 // Online checker
-// Function to run when the page has fully loaded
-function setStatus() {
+document.addEventListener('DOMContentLoaded', function () {
+        const names = document.querySelectorAll('.name');
+        const tooltip = document.getElementById('tooltip');
 
-    // Select all status elements
-    const statusElements = document.querySelectorAll('.status');
+        names.forEach(function (name) {
+            name.addEventListener('mouseover', function (event) {
+                showTooltip(event);
+            });
 
-    // Iterate over each element and change its text content
-    statusElements.forEach(function(element) {
-        element.textContent = 'onfline';
+            name.addEventListener('mouseout', function () {
+                hideTooltip();
+            });
+        });
+
+        function showTooltip(event) {
+            tooltip.style.display = 'block';
+            moveTooltip(event); // Initial positioning
+        }
+
+        function hideTooltip() {
+            tooltip.style.display = 'none';
+        }
+
+        function moveTooltip(event) {
+            tooltip.style.left = event.pageX + 10 + 'px'; // Offset to avoid covering the cursor
+            tooltip.style.top = event.pageY + 10 + 'px';
+        }
     });
-}
 
-// Attach function to the window onload event
-window.onload = setStatus;
+//Need to add communication with backend
