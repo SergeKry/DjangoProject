@@ -4,19 +4,6 @@
 
 {% block content %}
 
-<head>
-    <style>
-        .tooltp {
-            display: none;
-            position: absolute;
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            border-radius: 5px;
-            z-index: 1000;
-        }
-    </style>
-</head>
 <html>
 <body>
 <div class="container">
@@ -28,7 +15,7 @@
                     <div class="row mt-1">
                         <div class="col">[{{  message.created_at }}]</div>
                         <div class="col-7">
-                            <span class="name"><b>{{ message.author }}</b></span>: {{ message.text }}
+                            <span class="name" data-authorid="{{ message.author.pk }}"><b>{{ message.author }}</b></span>: {{ message.text }}
                         </div>
                         <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex">
@@ -54,7 +41,7 @@
                     </div>
                 </div>
             {% endfor %}
-        <div id="tooltip" class="tooltp">offline</div>
+        <div id="tooltip" class="tooltp"><span id="tooltip-text"></span></div>
         {% else %}
         <p style="color: #808080">start messaging</p>
         {% endif %}

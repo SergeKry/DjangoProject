@@ -1,0 +1,9 @@
+.tooltp {
+    display: none;
+    position: absolute;
+    width: 70px;
+    background-color: #dad9d9;
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 1000;
+}
