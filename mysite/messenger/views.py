@@ -117,13 +117,3 @@ class CheckOnlineStatus(View):
             online_status = query.online
         data = {'online_status': online_status}
         return JsonResponse(data)
-
-
-# REST API views
-class MessageList(generics.ListCreateAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-
-class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer

@@ -20,6 +20,4 @@ urlpatterns = [
     path('members/<int:pk>/', MembersView.as_view(), name='members'),
     path('reply/', ReplyView.as_view(), name='reply'),
     path('online_status/', CheckOnlineStatus.as_view(), name='online_status'),
-    path('messages/', MessageList.as_view()),
-    path('messages/<int:pk>/', MessageDetail.as_view()),
 ]
