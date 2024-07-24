@@ -1,5 +1,14 @@
 from django.urls import path
-from .views import ChatListView, CreateChatView, ChatView, EditMessageView, DeleteMessageView, MembersView, ReplyView
+from .views import (ChatListView,
+                    CreateChatView,
+                    ChatView,
+                    EditMessageView,
+                    DeleteMessageView,
+                    MembersView,
+                    ReplyView,
+                    CheckOnlineStatus,
+                    MessageList,
+                    MessageDetail)
 
 app_name = 'messenger'
 urlpatterns = [
@@ -9,5 +18,8 @@ urlpatterns = [
     path('delete_message/<int:pk>/', DeleteMessageView.as_view(), name='delete_message'),
     path('edit_message/<int:pk>/', EditMessageView.as_view(), name='edit_message'),
     path('members/<int:pk>/', MembersView.as_view(), name='members'),
-    path('reply/', ReplyView.as_view(), name='reply')
+    path('reply/', ReplyView.as_view(), name='reply'),
+    path('online_status/', CheckOnlineStatus.as_view(), name='online_status'),
+    path('messages/', MessageList.as_view()),
+    path('messages/<int:pk>/', MessageDetail.as_view()),
 ]
