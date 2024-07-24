@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from rest_framework import generics
+from .serializers import MessageSerializer
 from .models import Chat, Message, OnlineStatus
 from .forms import MembersForm, ChatForm, MessageForm
 from django.views import View
@@ -108,9 +110,20 @@ class ReplyView(LoginRequiredMixin, View):
 
 class CheckOnlineStatus(View):
     def get(self, request, *args, **kwargs):
-        online_status = None
+        online_status = False
         author_id = request.GET.get('author_id')
         if author_id:
-            online_status = OnlineStatus.objects.filter(user_id=author_id).first()
-        data = {'online_status': online_status.online}
+            query = OnlineStatus.objects.filter(user_id=author_id).first()
+            online_status = query.online
+        data = {'online_status': online_status}
         return JsonResponse(data)
+
+
+# REST API views
+class MessageList(generics.ListCreateAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer

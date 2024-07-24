@@ -6,7 +6,9 @@ from .views import (ChatListView,
                     DeleteMessageView,
                     MembersView,
                     ReplyView,
-                    CheckOnlineStatus)
+                    CheckOnlineStatus,
+                    MessageList,
+                    MessageDetail)
 
 app_name = 'messenger'
 urlpatterns = [
@@ -18,4 +20,6 @@ urlpatterns = [
     path('members/<int:pk>/', MembersView.as_view(), name='members'),
     path('reply/', ReplyView.as_view(), name='reply'),
     path('online_status/', CheckOnlineStatus.as_view(), name='online_status'),
+    path('messages/', MessageList.as_view()),
+    path('messages/<int:pk>/', MessageDetail.as_view()),
 ]
