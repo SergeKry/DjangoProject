@@ -8,7 +8,11 @@ from .views import (ChatListView,
                     ReplyView,
                     CheckOnlineStatus,
                     MessageList,
-                    MessageDetail)
+                    MessageDetail,
+                    MessageFullDetail,
+                    UserChats,
+                    UserMessagesList,
+                    )
 
 app_name = 'messenger'
 urlpatterns = [
@@ -22,4 +26,7 @@ urlpatterns = [
     path('online_status/', CheckOnlineStatus.as_view(), name='online_status'),
     path('messages/', MessageList.as_view()),
     path('messages/<int:pk>/', MessageDetail.as_view()),
+    path('message_details/<int:pk>/', MessageFullDetail.as_view()),
+    path('user_chats/<int:user_id>/', UserChats.as_view()),
+    path('user_messages/<int:user_id>',UserMessagesList.as_view())
 ]
