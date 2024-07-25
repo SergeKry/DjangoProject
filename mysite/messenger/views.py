@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework import generics
-from .serializers import MessageSerializer
+from rest_framework.generics import RetrieveAPIView
+from .serializers import MessageSerializer, MessageDetailSerializer, ChatSerializer
 from .models import Chat, Message, OnlineStatus
 from .forms import MembersForm, ChatForm, MessageForm
 from django.views import View
@@ -121,9 +122,43 @@ class CheckOnlineStatus(View):
 
 # REST API views
 class MessageList(generics.ListCreateAPIView):
+    """Create a message or see the full list of messages"""
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
+
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
+    """Read, Update, Delete a message"""
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+
+class MessageFullDetail(RetrieveAPIView):
+    """Get message details including author"""
+    queryset = Message.objects.all()
+    serializer_class = MessageDetailSerializer
+
+
+class UserChats(generics.ListAPIView):
+    """Get all chats of a user"""
+    serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        author_id = self.kwargs['user_id']
+        return Chat.objects.filter(members=author_id).all()
+
+
+class UserMessagesList(generics.ListAPIView):
+    """
+    Get all messages of a user in a given chat
+    User_id comes from URL, chat id comes from URL query parameters
+    """
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        author_id = self.kwargs['user_id']
+        chat_id = self.request.query_params.get('chat_id')
+        if chat_id:
+            return Message.objects.filter(author_id=author_id, chat_id=chat_id).all()
+        return Message.objects.filter(author_id=author_id).all()
+
