@@ -113,8 +113,8 @@ class CheckOnlineStatus(View):
     def get(self, request, *args, **kwargs):
         online_status = False
         author_id = request.GET.get('author_id')
-        if author_id:
-            query = OnlineStatus.objects.filter(user_id=author_id).first()
+        query = OnlineStatus.objects.filter(user_id=author_id).first()
+        if query:
             online_status = query.online
         data = {'online_status': online_status}
         return JsonResponse(data)

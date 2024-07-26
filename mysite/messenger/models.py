@@ -36,3 +36,8 @@ class MessageLog(models.Model):
 
     def __str__(self):
         return f'{self.user} created {self.message} at {self.time}'
+
+
+class OnlineStatus(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    online = models.BooleanField(default=False)
