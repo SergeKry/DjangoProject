@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'bootstrap5',
     'rest_framework',
+    'celery'
 ]
 
 MIDDLEWARE = [
@@ -141,5 +142,16 @@ REST_FRAMEWORK = {
 }
 
 # Celery settings
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+# Celery tasks
+from .celery import app
+from celery.schedules import crontab
+
+app.conf.beat_schedule = {
+    'log-latest-ten-messages-every-five-minutes': {
+        'task': 'messenger.tasks.get_latest_messages',
+        'schedule': crontab(minute='*/5')
+    }
+}
