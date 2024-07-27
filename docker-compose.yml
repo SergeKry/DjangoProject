@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+  django_app:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: django_app
+    volumes:
+      - ./mysite:/app/mysite
+    ports:
+      - '8000:8000'
+    depends_on:
+      - psql_db
+
+  psql_db:
+    image: postgres:16.2-alpine3.19
+    container_name: psql_db
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+volumes:
+  postgres_data:
